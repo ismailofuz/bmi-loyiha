@@ -15,7 +15,10 @@ import { Role } from '../common/enums/role.enum';
 import type { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { CreateJournalEntryDto, UpdateJournalEntryDto } from './dto/journal.dto';
 import { JournalService } from './journal.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Kundalik')
+@ApiBearerAuth('access-token')
 @Controller('journal')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class JournalController {

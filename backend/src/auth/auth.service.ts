@@ -74,6 +74,10 @@ export class AuthService {
       payload.isAdmin = (record.is_admin as boolean) ?? false;
     }
 
+    if (role === Role.Student) {
+      payload.studentId = record.id as number;
+    }
+
     return payload;
   }
 }

@@ -11,11 +11,16 @@ import { ReportsModule } from './reports/reports.module';
 import { ApplicationsModule } from './applications/applications.module';
 import { AcademicModule } from './academic/academic.module';
 import { InternshipsModule } from './internships/internships.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { RegulationsModule } from './regulations/regulations.module';
+import { ContractsModule } from './contracts/contracts.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    NotificationsModule,
     AuthModule,
     UsersModule,
     UniversitiesModule,
@@ -26,6 +31,9 @@ import { InternshipsModule } from './internships/internships.module';
     ApplicationsModule,
     AcademicModule,
     InternshipsModule,
+    AttendanceModule,
+    RegulationsModule,
+    ContractsModule,
   ],
 })
 export class AppModule {}

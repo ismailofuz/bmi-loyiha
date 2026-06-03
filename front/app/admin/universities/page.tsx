@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardShell from "@/components/DashboardShell";
 import PageHeader from "@/components/PageHeader";
+import ImportPanel from "@/components/ImportPanel";
 import EmptyState from "@/components/EmptyState";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ToastProvider";
@@ -13,11 +14,11 @@ const nav = [
   { label: "Kompaniyalar",  href: "/admin/companies",    icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 010-1.5h12.5a.75.75 0 010 1.5H16v13h.25a.75.75 0 010 1.5h-3.5a.75.75 0 01-.75-.75v-2.5a.75.75 0 00-.75-.75h-2.5a.75.75 0 00-.75.75v2.5a.75.75 0 01-.75.75h-3.5a.75.75 0 010-1.5H4z" clipRule="evenodd" /></svg> },
 ];
 
-interface University { id: number; name: string; address: string | null; contact_email: string | null; created_at: string }
+interface University { id: number; name: string; address: string | null; contact_email: string | null; rector_full_name: string | null; phone: string | null; inn: string | null; created_at: string }
 interface Staff { id: number; full_name: string | null; email: string; is_admin: boolean }
 
-const CREATE_EMPTY = { name: "", address: "", contact_email: "", admin_email: "", admin_password: "", admin_name: "" };
-const EDIT_EMPTY   = { name: "", address: "", contact_email: "", admin_email: "", admin_name: "", new_password: "" };
+const CREATE_EMPTY = { name: "", address: "", contact_email: "", rector_full_name: "", phone: "", inn: "", admin_email: "", admin_password: "", admin_name: "" };
+const EDIT_EMPTY   = { name: "", address: "", contact_email: "", rector_full_name: "", phone: "", inn: "", admin_email: "", admin_name: "", new_password: "" };
 
 export default function AdminUniversitiesPage() {
   const [universities, setUniversities] = useState<University[]>([]);
@@ -54,12 +55,15 @@ export default function AdminUniversitiesPage() {
     setCreating(true);
     try {
       await api.post("/universities", {
-        name:           createForm.name,
-        address:        createForm.address        || undefined,
-        contact_email:  createForm.contact_email  || undefined,
-        admin_email:    createForm.admin_email,
-        admin_password: createForm.admin_password,
-        admin_name:     createForm.admin_name     || undefined,
+        name:              createForm.name,
+        address:           createForm.address           || undefined,
+        contact_email:     createForm.contact_email     || undefined,
+        rector_full_name:  createForm.rector_full_name  || undefined,
+        phone:             createForm.phone             || undefined,
+        inn:               createForm.inn               || undefined,
+        admin_email:       createForm.admin_email,
+        admin_password:    createForm.admin_password,
+        admin_name:        createForm.admin_name        || undefined,
       });
       setShowCreate(false);
       setCreateForm(CREATE_EMPTY);
@@ -72,7 +76,7 @@ export default function AdminUniversitiesPage() {
   async function openEdit(u: University) {
     setEditTarget(u);
     setEditAdmin(null);
-    setEditForm({ name: u.name, address: u.address ?? "", contact_email: u.contact_email ?? "", admin_email: "", admin_name: "", new_password: "" });
+    setEditForm({ name: u.name, address: u.address ?? "", contact_email: u.contact_email ?? "", rector_full_name: u.rector_full_name ?? "", phone: u.phone ?? "", inn: u.inn ?? "", admin_email: "", admin_name: "", new_password: "" });
     setEditLoading(true);
     try {
       const staff = await api.get<Staff[]>(`/universities/${u.id}/staff`);
@@ -92,9 +96,12 @@ export default function AdminUniversitiesPage() {
     setSaving(true);
     try {
       await api.patch(`/universities/${editTarget.id}`, {
-        name:          editForm.name,
-        address:       editForm.address       || undefined,
-        contact_email: editForm.contact_email || undefined,
+        name:             editForm.name,
+        address:          editForm.address          || undefined,
+        contact_email:    editForm.contact_email    || undefined,
+        rector_full_name: editForm.rector_full_name || undefined,
+        phone:            editForm.phone            || undefined,
+        inn:              editForm.inn              || undefined,
       });
       if (editAdmin) {
         const staffUpdate: Record<string, string> = { full_name: editForm.admin_name || undefined as unknown as string };
@@ -125,11 +132,14 @@ export default function AdminUniversitiesPage() {
           title="Universitetlar"
           subtitle="Tizimga ro'yxatdan o'tgan universitetlar"
           action={
-            <button onClick={() => { setShowCreate(true); setCreateForm(CREATE_EMPTY); }}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
-              Qo&apos;shish
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <ImportPanel templatePath="/universities/import/template" importPath="/universities/import" templateName="universitetlar-shablon.xlsx" onDone={load} />
+              <button onClick={() => { setShowCreate(true); setCreateForm(CREATE_EMPTY); }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                Qo&apos;shish
+              </button>
+            </div>
           }
         />
 
@@ -223,6 +233,20 @@ export default function AdminUniversitiesPage() {
                 <label className="mb-1 block text-xs font-medium text-gray-600">Kontakt email</label>
                 <input type="email" value={createForm.contact_email} onChange={e => setCreateForm(f => ({ ...f, contact_email: e.target.value }))} placeholder="info@university.uz" className={inputCls} />
               </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">Rektor F.I.Sh</label>
+                <input type="text" value={createForm.rector_full_name} onChange={e => setCreateForm(f => ({ ...f, rector_full_name: e.target.value }))} placeholder="Rahimov Alisher Baxtiyorovich" className={inputCls} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
+                  <input type="text" value={createForm.phone} onChange={e => setCreateForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998 71 123-45-67" className={inputCls} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">INN</label>
+                  <input type="text" value={createForm.inn} onChange={e => setCreateForm(f => ({ ...f, inn: e.target.value }))} placeholder="123456789" className={inputCls} />
+                </div>
+              </div>
 
               <div className="border-t border-gray-100 pt-3">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Asosiy admin hisobi</p>
@@ -278,6 +302,20 @@ export default function AdminUniversitiesPage() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-600">Kontakt email</label>
                   <input type="email" value={editForm.contact_email} onChange={e => setEditForm(f => ({ ...f, contact_email: e.target.value }))} className={inputCls} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">Rektor F.I.Sh</label>
+                  <input type="text" value={editForm.rector_full_name} onChange={e => setEditForm(f => ({ ...f, rector_full_name: e.target.value }))} placeholder="Rahimov Alisher Baxtiyorovich" className={inputCls} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
+                    <input type="text" value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998 71 123-45-67" className={inputCls} />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-600">INN</label>
+                    <input type="text" value={editForm.inn} onChange={e => setEditForm(f => ({ ...f, inn: e.target.value }))} placeholder="123456789" className={inputCls} />
+                  </div>
                 </div>
 
                 <div className="border-t border-gray-100 pt-3">

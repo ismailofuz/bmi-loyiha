@@ -13,7 +13,10 @@ import {
   RespondStudentDto,
   UpdateInternshipDto,
 } from './dto/internship.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Amaliyotlar')
+@ApiBearerAuth('access-token')
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class InternshipsController {
@@ -72,6 +75,12 @@ export class InternshipsController {
   }
 
   // ── Talaba biriktirishlari (flat) ──────────────────────────────
+
+  @Get('internship-students/my')
+  @Roles(Role.Student)
+  findMyAssignments(@CurrentUser() user: JwtPayload) {
+    return this.internshipsService.findMyAssignments(user);
+  }
 
   @Get('internship-students')
   @Roles(Role.SuperAdmin, Role.UniversityStaff, Role.CompanyMentor)

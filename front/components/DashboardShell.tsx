@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { getUser, logout } from "@/lib/auth";
 import type { JwtUser } from "@/lib/auth";
+import NotificationBell from "@/components/NotificationBell";
 
 interface NavItem {
   label: string;
@@ -187,6 +188,7 @@ export default function DashboardShell({ nav, children }: Props) {
           </button>
           <div className="flex-1" />
           <span className="text-xs text-gray-400">{dateStr}</span>
+          <NotificationBell />
         </header>
 
         {/* Page content */}

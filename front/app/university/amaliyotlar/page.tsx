@@ -15,7 +15,9 @@ const nav = [
   { label: "Hisobotlar",  href: "/university/reports",      icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg> },
   { label: "Xodimlar",    href: "/university/staff",        adminOnly: true, icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M7 8a3 3 0 100-6 3 3 0 000 6zM14.5 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM1.615 16.428a1.224 1.224 0 01-.569-1.175 6.002 6.002 0 0111.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 017 18a9.953 9.953 0 01-5.385-1.572zM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 00-1.588-3.755 4.502 4.502 0 015.874 2.636.818.818 0 01-.36.98A7.465 7.465 0 0114.5 16z" /></svg> },
   { label: "Amaliyotlar", href: "/university/amaliyotlar",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" clipRule="evenodd" /><path d="M3 15.055v-.684c.126.053.255.1.39.142 2.1.644 4.318.999 6.61.999 2.291 0 4.51-.355 6.61-.999.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" /></svg> },
-  { label: "Struktura",   href: "/university/struktura",   icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> },
+  { label: "Struktura",   href: "/university/struktura",   icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> }, 
+  { label: "Hamkor korxonalar",  href: "/university/korxonalar",         icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" /></svg> },
+  { label: "Qaydnomalar",        href: "/university/qaydnomalar",        icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg> },
 ];
 
 const STATUS_STYLE: Record<string, string> = {
@@ -38,6 +40,7 @@ interface Internship {
   supervisor_name: string | null;
   internship_start: string; internship_end: string;
   created_at: string;
+  contract_uuid: string | null;
 }
 
 interface StudentEntry {
@@ -46,7 +49,18 @@ interface StudentEntry {
   supervisor_name: string | null;
   internship_start: string; internship_end: string;
   created_at: string;
+  edu_form_id: number | null; edu_type_id: number | null; edu_lang_id: number | null;
+  direction_id: number | null; course_id: number | null; group_id: number | null;
 }
+
+interface Opt { id: number; name: string }
+interface CourseOpt { id: number; number: number; direction_id: number }
+interface GroupOpt { id: number; name: string; course_id: number }
+
+const FILTERS_EMPTY = {
+  search: "", edu_form_id: "", edu_type_id: "", edu_lang_id: "",
+  direction_id: "", course_id: "", group_id: "",
+};
 
 const FORM_EMPTY = { company_id: "", supervisor_id: "", internship_start: "", internship_end: "" };
 
@@ -61,6 +75,15 @@ export default function UniversityAmaliyotlarPage() {
   const [studentEntries, setStudentEntries] = useState<StudentEntry[]>([]);
   const [loadingS, setLoadingS]             = useState(false);
   const [studentTabLoaded, setStudentTabLoaded] = useState(false);
+
+  /* Tab 2 — filtrlar */
+  const [filters, setFilters] = useState(FILTERS_EMPTY);
+  const [eduForms, setEduForms] = useState<Opt[]>([]);
+  const [eduTypes, setEduTypes] = useState<Opt[]>([]);
+  const [eduLangs, setEduLangs] = useState<Opt[]>([]);
+  const [directions, setDirections] = useState<Opt[]>([]);
+  const [courses, setCourses] = useState<CourseOpt[]>([]);
+  const [groups, setGroups] = useState<GroupOpt[]>([]);
 
   /* Create shartnoma modal */
   const [showCreate, setShowCreate]   = useState(false);
@@ -86,6 +109,22 @@ export default function UniversityAmaliyotlarPage() {
     api.get<StudentEntry[]>("/internship-students")
       .then(setStudentEntries)
       .finally(() => { setLoadingS(false); setStudentTabLoaded(true); });
+    // Filtr ro'yxatlari
+    Promise.allSettled([
+      api.get<Opt[]>("/academic/education-forms"),
+      api.get<Opt[]>("/academic/education-types"),
+      api.get<Opt[]>("/academic/education-languages"),
+      api.get<Opt[]>("/academic/directions"),
+      api.get<CourseOpt[]>("/academic/courses"),
+      api.get<GroupOpt[]>("/academic/groups"),
+    ]).then(([f, t, l, d, c, g]) => {
+      if (f.status === "fulfilled") setEduForms(f.value);
+      if (t.status === "fulfilled") setEduTypes(t.value);
+      if (l.status === "fulfilled") setEduLangs(l.value);
+      if (d.status === "fulfilled") setDirections(d.value);
+      if (c.status === "fulfilled") setCourses(c.value);
+      if (g.status === "fulfilled") setGroups(g.value);
+    });
   }, []);
 
   useEffect(() => { loadInternships(); }, [loadInternships]);
@@ -140,6 +179,31 @@ export default function UniversityAmaliyotlarPage() {
 
   const inputCls = "block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#2563eb]";
   const fmt = (d: string) => new Date(d).toLocaleDateString("uz-UZ");
+
+  // Kaskad: kurslar tanlangan yo'nalishga, guruhlar tanlangan kursga bog'liq
+  const courseOpts = filters.direction_id ? courses.filter(c => c.direction_id === +filters.direction_id) : courses;
+  const groupOpts = filters.course_id ? groups.filter(g => g.course_id === +filters.course_id) : groups;
+
+  function setFilter(patch: Partial<typeof FILTERS_EMPTY>) {
+    setFilters(prev => {
+      const next = { ...prev, ...patch };
+      if (patch.direction_id !== undefined) { next.course_id = ""; next.group_id = ""; }
+      if (patch.course_id !== undefined) { next.group_id = ""; }
+      return next;
+    });
+  }
+
+  const filteredEntries = studentEntries.filter(e => {
+    const f = filters;
+    if (f.search && !e.student_name.toLowerCase().includes(f.search.trim().toLowerCase())) return false;
+    if (f.edu_form_id && e.edu_form_id !== +f.edu_form_id) return false;
+    if (f.edu_type_id && e.edu_type_id !== +f.edu_type_id) return false;
+    if (f.edu_lang_id && e.edu_lang_id !== +f.edu_lang_id) return false;
+    if (f.direction_id && e.direction_id !== +f.direction_id) return false;
+    if (f.course_id && e.course_id !== +f.course_id) return false;
+    if (f.group_id && e.group_id !== +f.group_id) return false;
+    return true;
+  });
 
   const StatusBadge = ({ status }: { status: string }) => (
     <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLE[status] ?? "bg-gray-100 text-gray-600"}`}>
@@ -219,12 +283,20 @@ export default function UniversityAmaliyotlarPage() {
                         <td className="px-4 py-3"><StatusBadge status={item.status} /></td>
                         <td className="px-4 py-3 text-xs text-gray-400">{fmt(item.created_at)}</td>
                         <td className="px-4 py-3">
-                          {item.status === "accepted" && (
-                            <Link href={`/university/amaliyotlar/${item.id}`}
-                              className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100">
-                              Ko'rish
-                            </Link>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {item.contract_uuid && (
+                              <Link href={`/contracts/${item.contract_uuid}`}
+                                className="rounded-lg border border-blue-200 px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-50">
+                                Shartnoma
+                              </Link>
+                            )}
+                            {item.status === "accepted" && (
+                              <Link href={`/university/amaliyotlar/${item.id}`}
+                                className="rounded-lg border border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100">
+                                Ko'rish
+                              </Link>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -242,6 +314,48 @@ export default function UniversityAmaliyotlarPage() {
           ) : studentEntries.length === 0 ? (
             <EmptyState message="Talabalar yo'q" sub="Shartnoma tasdiqlanganidan keyin talabalar biriktiriladi" />
           ) : (
+            <div className="space-y-4">
+              {/* Filtrlar */}
+              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <input
+                  type="text"
+                  value={filters.search}
+                  onChange={e => setFilter({ search: e.target.value })}
+                  placeholder="Ism familiya bo'yicha qidirish..."
+                  className="mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#2563eb]"
+                />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                  <select value={filters.edu_form_id} onChange={e => setFilter({ edu_form_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Ta&apos;lim shakli</option>
+                    {eduForms.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                  <select value={filters.edu_type_id} onChange={e => setFilter({ edu_type_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Ta&apos;lim turi</option>
+                    {eduTypes.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                  <select value={filters.edu_lang_id} onChange={e => setFilter({ edu_lang_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Ta&apos;lim tili</option>
+                    {eduLangs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                  <select value={filters.direction_id} onChange={e => setFilter({ direction_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Yo&apos;nalish</option>
+                    {directions.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                  <select value={filters.course_id} onChange={e => setFilter({ course_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Kurs</option>
+                    {courseOpts.map(o => <option key={o.id} value={o.id}>{o.number}-kurs</option>)}
+                  </select>
+                  <select value={filters.group_id} onChange={e => setFilter({ group_id: e.target.value })} className="rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-[#2563eb]">
+                    <option value="">Guruh</option>
+                    {groupOpts.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-xs text-gray-500">{filteredEntries.length} ta talaba</span>
+                  <button onClick={() => setFilters(FILTERS_EMPTY)} className="text-xs font-medium text-[#2563eb] hover:underline">Tozalash</button>
+                </div>
+              </div>
+
             <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-100">
@@ -253,7 +367,9 @@ export default function UniversityAmaliyotlarPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {studentEntries.map((e, i) => (
+                    {filteredEntries.length === 0 ? (
+                      <tr><td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-400">Filtrga mos talaba topilmadi</td></tr>
+                    ) : filteredEntries.map((e, i) => (
                       <tr key={e.id} className="hover:bg-gray-50">
                         <td className="px-4 py-3 text-sm text-gray-400">{i + 1}</td>
                         <td className="px-4 py-3 text-sm font-semibold text-gray-800">{e.student_name}</td>
@@ -276,6 +392,7 @@ export default function UniversityAmaliyotlarPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
             </div>
           )
         )}

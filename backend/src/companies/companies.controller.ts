@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,8 +7,15 @@ import {
   Param,
   Patch,
   Post,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
+import type { Response } from 'express';
+import { buildTemplate, parseSheet } from '../common/utils/excel.util';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../common/decorators/roles.decorator';
@@ -16,7 +24,10 @@ import { Role } from '../common/enums/role.enum';
 import type { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { CreateCompanyDto, EnrollMentorDto, UpdateCompanyDto, UpdateMentorDto } from './dto/company.dto';
 import { CompaniesService } from './companies.service';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Korxonalar')
+@ApiBearerAuth('access-token')
 @Controller('companies')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class CompaniesController {
@@ -26,6 +37,32 @@ export class CompaniesController {
   @Roles(Role.SuperAdmin)
   create(@Body() dto: CreateCompanyDto) {
     return this.companiesService.create(dto);
+  }
+
+  @Get('import/template')
+  @Roles(Role.SuperAdmin)
+  importTemplate(@Res() res: Response) {
+    const headers = ['name', 'industry', 'address', 'contact_email', 'director_full_name', 'phone', 'inn', 'admin_email', 'admin_name', 'admin_position'];
+    const buf = buildTemplate(headers, {
+      name: 'IT Solutions MChJ', industry: 'IT', admin_email: 'admin@itsolutions.uz', director_full_name: 'Direktorov D.D.', admin_position: 'HR menejeri',
+    });
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': 'attachment; filename="korxonalar-shablon.xlsx"',
+    });
+    res.end(buf);
+  }
+
+  @Post('import')
+  @Roles(Role.SuperAdmin)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ schema: { type: 'object', properties: { file: { type: 'string', format: 'binary' } } } })
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 } }))
+  async importExcel(@UploadedFile() file?: Express.Multer.File) {
+    if (!file) throw new BadRequestException('Fayl yuklanmadi');
+    const rows = parseSheet(file.buffer);
+    if (!rows.length) throw new BadRequestException('Faylda ma\'lumot yo\'q');
+    return this.companiesService.importRows(rows);
   }
 
   @Post('enroll-mentor')

@@ -8,7 +8,9 @@ import StatusBadge from "@/components/StatusBadge";
 import StatusTabs from "@/components/StatusTabs";
 import EmptyState from "@/components/EmptyState";
 import { api } from "@/lib/api";
+import { getUser } from "@/lib/auth";
 import { useToast } from "@/components/ToastProvider";
+import StudentFilterBar from "@/components/StudentFilterBar";
 
 const nav = [
   { label: "Bosh sahifa", href: "/university",         icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z" clipRule="evenodd" /></svg> },
@@ -16,7 +18,9 @@ const nav = [
   { label: "Hisobotlar",  href: "/university/reports",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg> },
   { label: "Xodimlar",    href: "/university/staff",        adminOnly: true, icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M7 8a3 3 0 100-6 3 3 0 000 6zM14.5 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM1.615 16.428a1.224 1.224 0 01-.569-1.175 6.002 6.002 0 0111.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 017 18a9.953 9.953 0 01-5.385-1.572zM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 00-1.588-3.755 4.502 4.502 0 015.874 2.636.818.818 0 01-.36.98A7.465 7.465 0 0114.5 16z" /></svg> },
   { label: "Amaliyotlar", href: "/university/amaliyotlar", icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" clipRule="evenodd" /><path d="M3 15.055v-.684c.126.053.255.1.39.142 2.1.644 4.318.999 6.61.999 2.291 0 4.51-.355 6.61-.999.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" /></svg> },
-  { label: "Struktura",   href: "/university/struktura",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> },
+  { label: "Struktura",   href: "/university/struktura",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> }, 
+  { label: "Hamkor korxonalar",  href: "/university/korxonalar",         icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" /></svg> },
+  { label: "Qaydnomalar",        href: "/university/qaydnomalar",        icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg> },
 ];
 
 const TABS = [
@@ -25,8 +29,15 @@ const TABS = [
   { key: "draft", label: "Qoralama" },
 ];
 
-interface Student { id: number; full_name: string; student_number: string }
-interface Report { id: number; student_id: number; week_number: number; content: string; status: string; reviewer_feedback: string | null; reviewed_at: string | null }
+interface Student {
+  id: number; full_name: string; student_number: string;
+  edu_form_id: number | null; edu_type_id: number | null; edu_lang_id: number | null;
+  direction_id: number | null; course_id: number | null; group_id: number | null;
+}
+interface Report { id: number; student_id: number; week_number: number | null; report_date: string | null; content: string; status: string; grade: number | null; reviewer_feedback: string | null; reviewed_at: string | null; file_url: string | null; file_name: string | null }
+
+const BACKEND = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ?? "http://localhost:3080";
+interface Summary { reportsTotal: number; reportsApproved: number; averageGrade: number | null; attendancePresent: number; attendanceRate: number | null }
 
 function UniversityReportsContent() {
   const searchParams = useSearchParams();
@@ -35,56 +46,76 @@ function UniversityReportsContent() {
   const [students, setStudents] = useState<Student[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<string>(preselectedStudent ?? "");
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
-  const [reviewing, setReviewing] = useState<{ id: number; action: "approved" | "rejected" } | null>(null);
-  const [feedback, setFeedback] = useState("");
-  const [submittingReview, setSubmittingReview] = useState(false);
+  const [summary, setSummary] = useState<Summary | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    api.get<Student[]>("/students").then(setStudents);
+    // Katta admin barcha talabalarni, oddiy xodim faqat o'ziga biriktirilgan
+    // (mas'ul bo'lgan) talabalarni ko'radi.
+    const isAdmin = getUser()?.isAdmin;
+    api.get<Student[]>(`/students${isAdmin ? "" : "?supervised=true"}`).then(setStudents);
   }, []);
 
   const loadReports = useCallback((sid: string) => {
     if (!sid) return;
     setLoading(true);
     api.get<Report[]>(`/reports/student/${sid}`).then(setReports).finally(() => setLoading(false));
+    api.get<Summary>(`/reports/student/${sid}/summary`).then(setSummary).catch(() => setSummary(null));
   }, []);
 
   useEffect(() => { if (selectedStudent) loadReports(selectedStudent); }, [selectedStudent, loadReports]);
 
   const visible = activeTab === "all" ? reports : reports.filter(r => r.status === activeTab);
 
-  async function handleReview() {
-    if (!reviewing) return;
-    setSubmittingReview(true);
-    try {
-      await api.patch(`/reports/${reviewing.id}/review`, { status: reviewing.action, reviewer_feedback: feedback || undefined });
-      setReviewing(null);
-      setFeedback("");
-      loadReports(selectedStudent);
-    } catch (e) { toast(e instanceof Error ? e.message : "Xatolik", "error"); }
-    finally { setSubmittingReview(false); }
-  }
-
   return (
     <DashboardShell nav={nav}>
       <div className="space-y-5">
-        <PageHeader title="Hisobotlar" subtitle="Talabalarning haftalik hisobotlarini ko'rish va tasdiqlash" />
+        <PageHeader title="Hisobotlar" subtitle="Talabalar kunlik hisobotlari va baholarini kuzatish (monitoring)" />
 
-        {/* Student selector */}
-        <div className="flex items-center gap-3">
-          <label className="text-sm font-medium text-gray-600 shrink-0">Talabani tanlang:</label>
+        {/* To'liq filter */}
+        <StudentFilterBar students={students} onChange={setFilteredStudents} />
+
+        {/* Talabani tanlash (filtrlangan ro'yxatdan) */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-gray-600">Talabani tanlang:</label>
           <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)}
-            className="rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#2563eb]">
-            <option value="">— Tanlang —</option>
-            {students.map(s => <option key={s.id} value={s.id}>{s.full_name} ({s.student_number ?? s.id})</option>)}
+            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#2563eb] sm:w-96">
+            <option value="">— Tanlang ({filteredStudents.length}) —</option>
+            {filteredStudents.map(s => <option key={s.id} value={s.id}>{s.full_name}</option>)}
           </select>
         </div>
 
         {selectedStudent && (
           <>
+            {/* Yakuniy o'rtacha baho va davomat */}
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                <p className="text-2xl font-bold text-blue-700">{summary?.averageGrade ?? "—"}</p>
+                <p className="text-xs font-medium text-blue-600">Yakuniy o&apos;rtacha baho</p>
+              </div>
+              <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+                <p className="text-2xl font-bold text-green-700">{summary?.reportsApproved ?? 0}</p>
+                <p className="text-xs font-medium text-green-600">Tasdiqlangan hisobot</p>
+              </div>
+              <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+                <p className="text-2xl font-bold text-indigo-700">{summary?.attendanceRate != null ? `${summary.attendanceRate}%` : "—"}</p>
+                <p className="text-xs font-medium text-indigo-600">Davomat</p>
+              </div>
+              <button
+                onClick={async () => {
+                  try { await api.download(`/reports/student/${selectedStudent}/diary.pdf`, `kundalik-${selectedStudent}.pdf`); }
+                  catch (e) { toast(e instanceof Error ? e.message : "Xatolik", "error"); }
+                }}
+                className="flex flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-4 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50"
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor" className="mb-1 h-6 w-6 text-gray-400"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                Kundalik PDF
+              </button>
+            </div>
+
             <StatusTabs tabs={TABS} active={activeTab} onChange={setActiveTab} />
 
             {loading ? (
@@ -98,31 +129,33 @@ function UniversityReportsContent() {
                     <div className="flex items-start justify-between p-5">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-sm font-bold text-gray-600">{r.week_number}</div>
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
+                            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg>
+                          </div>
                           <div>
-                            <p className="text-sm font-semibold text-gray-800">{r.week_number}-hafta hisoboti</p>
+                            <p className="text-sm font-semibold text-gray-800">
+                              {r.report_date ? new Date(r.report_date).toLocaleDateString("uz-UZ") : "Kunlik"} hisoboti
+                            </p>
                           </div>
                           <StatusBadge status={r.status} />
+                          {r.status === "approved" && r.grade != null && (
+                            <span className="rounded-full bg-green-600 px-2 py-0.5 text-xs font-bold text-white">Baho: {r.grade}/5</span>
+                          )}
                         </div>
-                        <p className="text-sm text-gray-600 line-clamp-3">{r.content}</p>
+                        <p className="whitespace-pre-wrap text-sm text-gray-600">{r.content}</p>
+                        {r.file_url && (
+                          <a href={`${BACKEND}${r.file_url}`} target="_blank" rel="noreferrer"
+                            className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:underline">
+                            <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg>
+                            {r.file_name || "Yuklangan fayl"}
+                          </a>
+                        )}
                         {r.reviewer_feedback && (
                           <div className={`mt-3 rounded-lg p-3 text-xs ${r.status === "approved" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`}>
-                            <span className="font-semibold">Izoh: </span>{r.reviewer_feedback}
+                            <span className="font-semibold">Mentor izohi: </span>{r.reviewer_feedback}
                           </div>
                         )}
                       </div>
-                      {r.status === "submitted" && (
-                        <div className="ml-4 flex shrink-0 flex-col gap-2">
-                          <button onClick={() => setReviewing({ id: r.id, action: "approved" })}
-                            className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700">
-                            Tasdiqlash
-                          </button>
-                          <button onClick={() => setReviewing({ id: r.id, action: "rejected" })}
-                            className="rounded-lg bg-red-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-600">
-                            Rad etish
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
@@ -135,31 +168,6 @@ function UniversityReportsContent() {
           <EmptyState message="Talaba tanlang" sub="Hisobotlarni ko'rish uchun yuqoridan talabani tanlang" />
         )}
       </div>
-
-      {/* Review modal */}
-      {reviewing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <h3 className={`mb-1 text-base font-bold ${reviewing.action === "approved" ? "text-green-700" : "text-red-700"}`}>
-              {reviewing.action === "approved" ? "Hisobotni tasdiqlash" : "Hisobotni rad etish"}
-            </h3>
-            <p className="mb-4 text-sm text-gray-500">Izohlangiz ixtiyoriy — talabaga ko&apos;rinadi.</p>
-            <textarea rows={3} value={feedback} onChange={e => setFeedback(e.target.value)}
-              placeholder="Izoh (ixtiyoriy)..."
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[#2563eb] resize-none mb-4" />
-            <div className="flex justify-end gap-2">
-              <button onClick={() => { setReviewing(null); setFeedback(""); }}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                Bekor qilish
-              </button>
-              <button onClick={handleReview} disabled={submittingReview}
-                className={`rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 ${reviewing.action === "approved" ? "bg-green-600 hover:bg-green-700" : "bg-red-500 hover:bg-red-600"}`}>
-                {submittingReview ? "..." : reviewing.action === "approved" ? "Tasdiqlash" : "Rad etish"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </DashboardShell>
   );
 }

@@ -12,6 +12,18 @@ export class CreateUniversityDto {
   @IsOptional()
   contact_email?: string;
 
+  @IsString()
+  @IsOptional()
+  rector_full_name?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  inn?: string;
+
   @IsEmail()
   admin_email: string;
 
@@ -22,6 +34,10 @@ export class CreateUniversityDto {
   @IsString()
   @IsOptional()
   admin_name?: string;
+
+  @IsString()
+  @IsOptional()
+  admin_position?: string;
 }
 
 export class EnrollStaffDto {
@@ -43,6 +59,10 @@ export class EnrollStaffDto {
   @IsOptional()
   phone?: string;
 
+  @IsString()
+  @IsOptional()
+  position?: string;
+
   @IsBoolean()
   @IsOptional()
   is_admin?: boolean;
@@ -60,6 +80,18 @@ export class UpdateUniversityDto {
   @IsEmail()
   @IsOptional()
   contact_email?: string;
+
+  @IsString()
+  @IsOptional()
+  rector_full_name?: string;
+
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @IsString()
+  @IsOptional()
+  inn?: string;
 }
 
 export class UpdateStaffDto {
@@ -70,6 +102,10 @@ export class UpdateStaffDto {
   @IsString()
   @IsOptional()
   phone?: string;
+
+  @IsString()
+  @IsOptional()
+  position?: string;
 
   @IsEmail()
   @IsOptional()

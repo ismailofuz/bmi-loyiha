@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardShell from "@/components/DashboardShell";
 import PageHeader from "@/components/PageHeader";
+import ImportPanel from "@/components/ImportPanel";
 import EmptyState from "@/components/EmptyState";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/ToastProvider";
@@ -16,12 +17,12 @@ const nav = [
 interface Company {
   id: number; name: string;
   industry: string | null; address: string | null;
-  contact_email: string | null; created_at: string;
+  contact_email: string | null; director_full_name: string | null; phone: string | null; inn: string | null; created_at: string;
 }
 interface Mentor { id: number; full_name: string | null; email: string }
 
-const CO_EMPTY   = { name: "", industry: "", address: "", contact_email: "", admin_email: "", admin_password: "", admin_name: "" };
-const EDIT_EMPTY = { name: "", industry: "", address: "", contact_email: "", admin_email: "", admin_name: "", new_password: "" };
+const CO_EMPTY   = { name: "", industry: "", address: "", contact_email: "", director_full_name: "", phone: "", inn: "", admin_email: "", admin_password: "", admin_name: "" };
+const EDIT_EMPTY = { name: "", industry: "", address: "", contact_email: "", director_full_name: "", phone: "", inn: "", admin_email: "", admin_name: "", new_password: "" };
 
 export default function AdminCompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -60,13 +61,16 @@ export default function AdminCompaniesPage() {
     setCreating(true);
     try {
       await api.post("/companies", {
-        name: coForm.name,
-        industry:      coForm.industry      || undefined,
-        address:       coForm.address       || undefined,
-        contact_email: coForm.contact_email || undefined,
-        admin_email:   coForm.admin_email,
-        admin_password: coForm.admin_password,
-        admin_name:    coForm.admin_name    || undefined,
+        name:               coForm.name,
+        industry:           coForm.industry           || undefined,
+        address:            coForm.address            || undefined,
+        contact_email:      coForm.contact_email      || undefined,
+        director_full_name: coForm.director_full_name || undefined,
+        phone:              coForm.phone              || undefined,
+        inn:                coForm.inn                || undefined,
+        admin_email:        coForm.admin_email,
+        admin_password:     coForm.admin_password,
+        admin_name:         coForm.admin_name         || undefined,
       });
       setShowCreate(false);
       setCoForm(CO_EMPTY);
@@ -79,7 +83,7 @@ export default function AdminCompaniesPage() {
   async function openEdit(c: Company) {
     setEditTarget(c);
     setEditAdmin(null);
-    setEditForm({ name: c.name, industry: c.industry ?? "", address: c.address ?? "", contact_email: c.contact_email ?? "", admin_email: "", admin_name: "", new_password: "" });
+    setEditForm({ name: c.name, industry: c.industry ?? "", address: c.address ?? "", contact_email: c.contact_email ?? "", director_full_name: c.director_full_name ?? "", phone: c.phone ?? "", inn: c.inn ?? "", admin_email: "", admin_name: "", new_password: "" });
     setEditLoading(true);
     try {
       const mentors = await api.get<Mentor[]>(`/companies/${c.id}/mentors`);
@@ -99,10 +103,13 @@ export default function AdminCompaniesPage() {
     setSaving(true);
     try {
       await api.patch(`/companies/${editTarget.id}`, {
-        name:          editForm.name,
-        industry:      editForm.industry      || undefined,
-        address:       editForm.address       || undefined,
-        contact_email: editForm.contact_email || undefined,
+        name:               editForm.name,
+        industry:           editForm.industry           || undefined,
+        address:            editForm.address            || undefined,
+        contact_email:      editForm.contact_email      || undefined,
+        director_full_name: editForm.director_full_name || undefined,
+        phone:              editForm.phone              || undefined,
+        inn:                editForm.inn                || undefined,
       });
       if (editAdmin) {
         const mentorUpdate: Record<string, string> = { full_name: editForm.admin_name || undefined as unknown as string };
@@ -133,11 +140,14 @@ export default function AdminCompaniesPage() {
           title="Kompaniyalar"
           subtitle="Amaliyot kompaniyalari ro'yxati"
           action={
-            <button onClick={() => { setShowCreate(true); setCoForm(CO_EMPTY); }}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
-              Qo&apos;shish
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <ImportPanel templatePath="/companies/import/template" importPath="/companies/import" templateName="korxonalar-shablon.xlsx" onDone={load} />
+              <button onClick={() => { setShowCreate(true); setCoForm(CO_EMPTY); }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#2563eb] px-3.5 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" /></svg>
+                Qo&apos;shish
+              </button>
+            </div>
           }
         />
 
@@ -236,6 +246,20 @@ export default function AdminCompaniesPage() {
                 <label className="mb-1 block text-xs font-medium text-gray-600">Kontakt email</label>
                 <input type="email" value={coForm.contact_email} onChange={e => setCoForm(f => ({ ...f, contact_email: e.target.value }))} placeholder="hr@company.uz" className={inputCls} />
               </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">Rahbar F.I.Sh</label>
+                <input type="text" value={coForm.director_full_name} onChange={e => setCoForm(f => ({ ...f, director_full_name: e.target.value }))} placeholder="Karimov Bobur Aliyevich" className={inputCls} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
+                  <input type="text" value={coForm.phone} onChange={e => setCoForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998 71 123-45-67" className={inputCls} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">INN</label>
+                  <input type="text" value={coForm.inn} onChange={e => setCoForm(f => ({ ...f, inn: e.target.value }))} placeholder="123456789" className={inputCls} />
+                </div>
+              </div>
 
               <div className="border-t border-gray-100 pt-3">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">Asosiy admin hisobi</p>
@@ -296,6 +320,20 @@ export default function AdminCompaniesPage() {
                 <div>
                   <label className="mb-1 block text-xs font-medium text-gray-600">Kontakt email</label>
                   <input type="email" value={editForm.contact_email} onChange={e => setEditForm(f => ({ ...f, contact_email: e.target.value }))} className={inputCls} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-600">Rahbar F.I.Sh</label>
+                  <input type="text" value={editForm.director_full_name} onChange={e => setEditForm(f => ({ ...f, director_full_name: e.target.value }))} placeholder="Karimov Bobur Aliyevich" className={inputCls} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
+                    <input type="text" value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998 71 123-45-67" className={inputCls} />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-600">INN</label>
+                    <input type="text" value={editForm.inn} onChange={e => setEditForm(f => ({ ...f, inn: e.target.value }))} placeholder="123456789" className={inputCls} />
+                  </div>
                 </div>
 
                 <div className="border-t border-gray-100 pt-3">

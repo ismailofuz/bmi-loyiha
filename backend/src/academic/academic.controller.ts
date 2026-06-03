@@ -37,7 +37,10 @@ import {
   UpdateGroupDto,
   UpdateCourseDto,
 } from './dto/academic.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Akademik')
+@ApiBearerAuth('access-token')
 @Controller('academic')
 @UseGuards(JwtAuthGuard, RolesGuard, PermissionGuard)
 @Roles(Role.SuperAdmin, Role.UniversityStaff)

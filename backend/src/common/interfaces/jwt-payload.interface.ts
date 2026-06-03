@@ -10,4 +10,6 @@ export interface JwtPayload {
   isAdmin?: boolean;
   /** Populated for company_mentor — their company id */
   companyId?: number;
+  /** Populated for student — same as sub but explicit for frontend convenience */
+  studentId?: number;
 }

@@ -7,7 +7,10 @@ import { Role } from '../common/enums/role.enum';
 import type { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { CreateApplicationDto, RespondApplicationDto, UpdateApplicationDto } from './dto/application.dto';
 import { ApplicationsService } from './applications.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Arizalar')
+@ApiBearerAuth('access-token')
 @Controller('applications')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ApplicationsController {

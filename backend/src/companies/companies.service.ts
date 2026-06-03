@@ -11,13 +11,51 @@ import { KNEX_CONNECTION } from '../database/database.provider';
 import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import { Role } from '../common/enums/role.enum';
 import { CreateCompanyDto, EnrollMentorDto, UpdateCompanyDto, UpdateMentorDto } from './dto/company.dto';
+import { genPassword } from '../common/utils/excel.util';
 
 @Injectable()
 export class CompaniesService {
   constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
+  /** Excel'dan ommaviy import. Parol avtomatik generatsiya qilinadi. */
+  async importRows(rows: Record<string, string>[]) {
+    const created: { full_name: string; email: string; password: string }[] = [];
+    const failed: { row: number; label: string; reason: string }[] = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      const rowNum = i + 2;
+      const name = (r.name ?? '').trim();
+      const admin_email = (r.admin_email ?? '').trim();
+      if (!name || !admin_email) {
+        failed.push({ row: rowNum, label: name || admin_email, reason: "nomi va admin_email majburiy" });
+        continue;
+      }
+      const password = genPassword();
+      try {
+        await this.create({
+          name,
+          industry: r.industry || undefined,
+          address: r.address || undefined,
+          contact_email: r.contact_email || undefined,
+          director_full_name: r.director_full_name || undefined,
+          phone: r.phone || undefined,
+          inn: r.inn || undefined,
+          admin_email,
+          admin_password: password,
+          admin_name: r.admin_name || undefined,
+          admin_position: r.admin_position || undefined,
+        } as CreateCompanyDto);
+        created.push({ full_name: r.admin_name || name, email: admin_email, password });
+      } catch (e) {
+        failed.push({ row: rowNum, label: name, reason: e instanceof Error ? e.message : 'Xatolik' });
+      }
+    }
+    return { created, failed };
+  }
+
   async create(dto: CreateCompanyDto) {
-    const { admin_email, admin_password, admin_name, ...companyData } = dto;
+    const { admin_email, admin_password, admin_name, admin_position, ...companyData } = dto;
 
     const existing = await this.knex('company_mentors').where({ email: admin_email }).first();
     if (existing) throw new ConflictException('Bu email allaqachon ishlatilgan');
@@ -29,6 +67,7 @@ export class CompaniesService {
       const [mentor] = await trx('company_mentors').insert({
         company_id: company.id,
         full_name: admin_name ?? null,
+        position: admin_position ?? null,
         email: admin_email,
         password_hash,
         is_admin: true,
@@ -84,6 +123,7 @@ export class CompaniesService {
         company_id: dto.company_id,
         full_name: dto.full_name,
         phone: dto.phone,
+        position: dto.position ?? null,
         email: dto.email,
         password_hash,
       }).returning('*');
@@ -96,7 +136,7 @@ export class CompaniesService {
     this.assertAccess(companyId, requester);
     return this.knex('company_mentors')
       .where({ company_id: companyId })
-      .select('id', 'full_name', 'phone', 'is_admin', 'email', 'is_active', 'created_at');
+      .select('id', 'full_name', 'phone', 'position', 'is_admin', 'email', 'is_active', 'created_at');
   }
 
   async updateMentor(mentorId: number, dto: UpdateMentorDto, requester: JwtPayload) {

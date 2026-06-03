@@ -14,12 +14,14 @@ const nav = [
   { label: "Hisobotlar",  href: "/university/reports",    icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" /></svg> },
   { label: "Xodimlar",    href: "/university/staff",      adminOnly: true, icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M7 8a3 3 0 100-6 3 3 0 000 6zM14.5 9a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM1.615 16.428a1.224 1.224 0 01-.569-1.175 6.002 6.002 0 0111.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 017 18a9.953 9.953 0 01-5.385-1.572zM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 00-1.588-3.755 4.502 4.502 0 015.874 2.636.818.818 0 01-.36.98A7.465 7.465 0 0114.5 16z" /></svg> },
   { label: "Amaliyotlar", href: "/university/amaliyotlar",icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" clipRule="evenodd" /><path d="M3 15.055v-.684c.126.053.255.1.39.142 2.1.644 4.318.999 6.61.999 2.291 0 4.51-.355 6.61-.999.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" /></svg> },
-  { label: "Struktura",   href: "/university/struktura",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> },
+  { label: "Struktura",   href: "/university/struktura",  icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path d="M2 3a1 1 0 00-1 1v1a1 1 0 001 1h16a1 1 0 001-1V4a1 1 0 00-1-1H2zM2 9a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2zM2 15a1 1 0 00-1 1v1a1 1 0 001 1h6a1 1 0 001-1v-1a1 1 0 00-1-1H2z" /></svg> }, 
+  { label: "Hamkor korxonalar",  href: "/university/korxonalar",         icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2h-5L9 4H4zm7 5a1 1 0 10-2 0v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" /></svg> },
+  { label: "Qaydnomalar",        href: "/university/qaydnomalar",        icon: <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg> },
 ];
 
 interface University { id: number; name: string }
 interface Staff {
-  id: number; full_name: string; phone: string; email: string;
+  id: number; full_name: string; phone: string; position: string | null; email: string;
   is_active: boolean; is_admin: boolean;
   permissions: Record<string, Record<string, boolean>>;
   created_at: string;
@@ -44,8 +46,8 @@ const PERM_OPS = [
   { key: "delete", label: "O'chirish" },
 ];
 
-const ENROLL_EMPTY = { full_name: "", email: "", password: "", phone: "" };
-const EDIT_EMPTY = { full_name: "", phone: "", email: "", new_password: "" };
+const ENROLL_EMPTY = { full_name: "", email: "", password: "", phone: "", position: "" };
+const EDIT_EMPTY = { full_name: "", phone: "", position: "", email: "", new_password: "" };
 
 export default function UniversityStaffPage() {
   const currentUser = getUser();
@@ -106,6 +108,7 @@ export default function UniversityStaffPage() {
       await api.post("/universities/enroll-staff", {
         full_name, email, password,
         phone: enrollForm.phone || undefined,
+        position: enrollForm.position || undefined,
         university_id: universityId,
       });
       setShowEnroll(false); setEnrollForm(ENROLL_EMPTY);
@@ -116,7 +119,7 @@ export default function UniversityStaffPage() {
 
   function openEdit(s: Staff) {
     setEditTarget(s);
-    setEditForm({ full_name: s.full_name ?? "", phone: s.phone ?? "", email: s.email, new_password: "" });
+    setEditForm({ full_name: s.full_name ?? "", phone: s.phone ?? "", position: s.position ?? "", email: s.email, new_password: "" });
     setEditIsAdmin(s.is_admin ?? false);
   }
 
@@ -127,6 +130,7 @@ export default function UniversityStaffPage() {
       const staffUpdate: Record<string, string | undefined> = {
         full_name: editForm.full_name || undefined,
         phone: editForm.phone || undefined,
+        position: editForm.position || undefined,
       };
       if (editForm.email && editForm.email !== editTarget.email) staffUpdate.email = editForm.email;
       if (editForm.new_password) staffUpdate.new_password = editForm.new_password;
@@ -205,7 +209,7 @@ export default function UniversityStaffPage() {
                               <p className="text-sm font-semibold text-gray-800">{s.full_name || "—"}</p>
                               {s.is_admin && <span className="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700">ADMIN</span>}
                             </div>
-                            <p className="text-xs text-gray-400">{s.email}</p>
+                            <p className="text-xs text-gray-400">{s.position || s.email}</p>
                           </div>
                         </div>
                       </td>
@@ -260,6 +264,10 @@ export default function UniversityStaffPage() {
                 <input type="password" value={enrollForm.password} onChange={e => setEnrollForm(f => ({ ...f, password: e.target.value }))} placeholder="••••••" className={inputCls} />
               </div>
               <div>
+                <label className="mb-1 block text-xs font-medium text-gray-600">Lavozim</label>
+                <input type="text" value={enrollForm.position} onChange={e => setEnrollForm(f => ({ ...f, position: e.target.value }))} placeholder="Masalan: Amaliyot rahbari, o'qituvchi" className={inputCls} />
+              </div>
+              <div>
                 <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
                 <input type="text" value={enrollForm.phone} onChange={e => setEnrollForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998..." className={inputCls} />
               </div>
@@ -289,6 +297,10 @@ export default function UniversityStaffPage() {
               <div className="col-span-2 sm:col-span-1">
                 <label className="mb-1 block text-xs font-medium text-gray-600">Telefon</label>
                 <input type="text" value={editForm.phone} onChange={e => setEditForm(f => ({ ...f, phone: e.target.value }))} placeholder="+998..." className={inputCls} />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <label className="mb-1 block text-xs font-medium text-gray-600">Lavozim</label>
+                <input type="text" value={editForm.position} onChange={e => setEditForm(f => ({ ...f, position: e.target.value }))} placeholder="Amaliyot rahbari" className={inputCls} />
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <label className="mb-1 block text-xs font-medium text-gray-600">Email (login)</label>
